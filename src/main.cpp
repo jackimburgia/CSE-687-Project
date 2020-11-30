@@ -16,40 +16,44 @@
 #include "Windows.h"
 #endif
 
+namespace mainFunctions {
 
-// Function that returns whether the test value is greater than 100
-bool is_greater_than_100() {
-    int val1 = 76;
-    bool isGreaterThan = val1 > 100;
-    return isGreaterThan;
+    // Function that returns whether the test value is greater than 100
+    bool is_greater_than_100() {
+        int val1 = 76;
+        bool isGreaterThan = val1 > 100;
+        return isGreaterThan;
+    }
+
+    // Function that returns whether the test value is greater than 50
+    bool is_greater_than_50() {
+        int val1 = 76;
+        bool isGreaterThan = val1 > 50;
+        return isGreaterThan;
+    }
+
+    // Functor that returns whether a test value is betweem 10 and 30
+    class is_between_10_and_30_Functor {
+    public:
+        bool operator()() {
+            int val1 = 34;
+            bool isBetween = val1 >= 10 && val1 <= 30;
+            return isBetween;
+        }
+    };
+
+    // Functor that returns whether a test value is betweem 5 and 80
+    class is_between_5_and_80_Functor {
+    public:
+        bool operator()() {
+            int val1 = 34;
+            bool isBetween = val1 >= 5 && val1 <= 80;
+            return isBetween;
+        }
+    };
 }
 
-// Function that returns whether the test value is greater than 50
-bool is_greater_than_50() {
-    int val1 = 76;
-    bool isGreaterThan = val1 > 50;
-    return isGreaterThan;
-}
-
-// Functor that returns whether a test value is betweem 10 and 30
-class is_between_10_and_30_Functor {
-public:
-    bool operator()() {
-        int val1 = 34;
-        bool isBetween = val1 >= 10 && val1 <= 30;
-        return isBetween;
-    }
-};
-
-// Functor that returns whether a test value is betweem 5 and 80
-class is_between_5_and_80_Functor {
-public:
-    bool operator()() {
-        int val1 = 34;
-        bool isBetween = val1 >= 5 && val1 <= 80;
-        return isBetween;
-    }
-};
+using namespace mainFunctions;
 
 
 int main()
@@ -62,9 +66,11 @@ int main()
         int val2 = 33;
 
 #ifdef _WIN32
-        Sleep(5000);
+        //Sleep(5000);
 #endif
         bool isEqual = val1 == val2;
+
+
         return isEqual;
     };
     LambdaTest test1(are_values_equal_1, "Are values equal", "Lambda test failed! val1 and val2 are not equal!");
@@ -130,18 +136,20 @@ int main()
     }
 
 
+    // create a vector of tests to be performed
+    vector<ITest*> tests;
+    tests.push_back(&test1);
+    tests.push_back(&test2);
+    tests.push_back(&test3);
+    tests.push_back(&test4);
+    tests.push_back(&test5);
+    tests.push_back(&test6);
+    tests.push_back(&test7);
+
+
     // create the test harness
     // use dependency injection to inject the logging
-    TestHarness testHarness(logging);
-    testHarness.addTest(&test1);
-    testHarness.addTest(&test2);
-    testHarness.addTest(&test3);
-    testHarness.addTest(&test4);
-    testHarness.addTest(&test5);
-    testHarness.addTest(&test6);
-    testHarness.addTest(&test7);
+    TestHarness testHarness(logging, tests);
 
-    // run all of the tests
-    testHarness.runTestSequence();
-
+    return 0;
 }

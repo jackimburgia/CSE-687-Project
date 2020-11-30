@@ -11,6 +11,9 @@
 #include "TestResult.h"
 #include "Logging.h"
 #include <vector>
+#include "Sockets.h"
+#include "Message.h"
+#include "Comm.h"
 
 using std::vector;
 
@@ -25,8 +28,15 @@ public:
 	*
 	* @log[in] - pointer to logging abstraction to be used for logging
 	**/
-	TestHarness(Logging* log) :
-		logging(log) {}
+	TestHarness(Logging* log);
+
+	/**
+	* Constructor to create a new TestHarness instance
+	*
+	* @log[in] - pointer to logging abstraction to be used for logging
+	* @tests[in] - vectors of tests to be run in parralel
+	**/
+	TestHarness(Logging* log, vector<ITest*> tests);
 
 	/**
 	* Destructor
@@ -54,6 +64,13 @@ private:
 	void log(TestResult result);
 
 	/**
+	* Creates a new child thread
+	*
+	* @port[in] - port number for the child thread communication end point
+	**/
+	void childThread(int port);
+
+	/**
 	* Runs a single test
 	*
 	* @test[in] - test to be run
@@ -64,4 +81,13 @@ private:
 	vector<ITest*> tests;
 	// Pointer to logging abstraction that was injected in
 	Logging* logging;
+
+	// the ready queue of threads that are available to run tests
+	BlockingQueue<int> ready;
+	// the queue of tests that need to be run
+	BlockingQueue<int> testIds;
+
+	// temporary - used to store times for sleeping to demonstrate
+	//	tests beuing run in parallel
+	BlockingQueue<int> sleepTimes;
 };
